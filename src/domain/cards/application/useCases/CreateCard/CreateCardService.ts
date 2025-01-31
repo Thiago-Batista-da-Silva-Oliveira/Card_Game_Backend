@@ -2,6 +2,7 @@ import { Card } from '@/domain/cards/enterprise/entities/Card';
 import { CardRepository } from '../../repositories/ICardRepository';
 import { ICreateCardDTO } from '../../dtos/ICreateCardDTO';
 import { Either, right } from '@/core/either';
+import { Injectable } from '@nestjs/common';
 
 type IOutput = Either<
   null,
@@ -10,6 +11,7 @@ type IOutput = Either<
   }
 >;
 
+@Injectable()
 export class CreateCardService {
   constructor(private cardRepository: CardRepository) {}
   async execute({ name }: ICreateCardDTO): Promise<IOutput> {
