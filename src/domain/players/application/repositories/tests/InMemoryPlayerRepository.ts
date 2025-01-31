@@ -13,4 +13,8 @@ export class InMemoryPlayerRepository implements PlayerRepository {
   async findByEmail(email: string): Promise<Player | undefined> {
     return this.items.find((player) => player.email === email);
   }
+
+  async findById(id: string): Promise<Player | undefined> {
+    return this.items.find((player) => player.id.toValue() === id);
+  }
 }

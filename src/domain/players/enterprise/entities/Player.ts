@@ -21,6 +21,14 @@ export class Player extends Entity<PlayerProps> {
     return this.props.password;
   }
 
+  get status() {
+    return this.props.status;
+  }
+
+  get accessType() {
+    return this.props.accessType;
+  }
+
   static create(props: PlayerProps, id?: UniqueEntityID) {
     if (!props.accessType) {
       props.accessType = 'player';
