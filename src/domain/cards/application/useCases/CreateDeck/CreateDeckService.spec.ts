@@ -1,6 +1,5 @@
 import { InMemoryPlayerRepository } from '@/domain/players/application/repositories/tests/InMemoryPlayerRepository';
 import { makePlayer } from '@/domain/players/application/repositories/tests/factories/makePlayer';
-import { NotAllowedError } from '@/core/errors/errors/not-allowed-error';
 import { InMemoryDeckRepository } from '../../repositories/tests/InMemoryDeckRepository';
 import { CreateDeckService } from './CreateDeckService';
 import { DeckAlreadyExistsError } from '../errors/deck-already-exists';
