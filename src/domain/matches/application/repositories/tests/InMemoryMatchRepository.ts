@@ -9,4 +9,20 @@ export class InMemoryMatchRepository implements MatchRepository {
     this.items.push(match);
     return match;
   }
+
+  async findById(matchId: string): Promise<Match | null> {
+    const match = this.items.find((match) => match.id.toValue() === matchId);
+
+    return match || null;
+  }
+
+  async save(match: Match): Promise<Match> {
+    const itemIndex = this.items.findIndex(
+      (item) => item.id.toValue() === match.id.toValue(),
+    );
+
+    this.items[itemIndex] = match;
+
+    return this.items[itemIndex];
+  }
 }

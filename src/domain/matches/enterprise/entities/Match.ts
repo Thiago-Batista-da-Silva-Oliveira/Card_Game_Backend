@@ -45,7 +45,6 @@ export class Match extends Entity<MatchProps> {
 
   get finishedAt() {
     return this.props.finishedAt;
-    this.touch();
   }
 
   set finishedAt(finishedAt) {
@@ -59,6 +58,15 @@ export class Match extends Entity<MatchProps> {
 
   set status(status) {
     this.props.status = status;
+    this.touch();
+  }
+
+  get matchHistory() {
+    return this.props.matchHistory;
+  }
+
+  set matchHistory(matchHistory) {
+    this.props.matchHistory = matchHistory;
     this.touch();
   }
 

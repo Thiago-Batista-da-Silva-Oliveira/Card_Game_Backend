@@ -9,4 +9,11 @@ export class InMemoryCardRepository implements CardRepository {
     this.items.push(card);
     return card;
   }
+
+  async findById(cardId: string): Promise<Card | null> {
+    const card =
+      this.items.find((card) => card.id.toValue() === cardId) || null;
+
+    return card || null;
+  }
 }

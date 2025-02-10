@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable prettier/prettier */
 import { Entity } from 'src/core/entities/entity';
 import { UniqueEntityID } from 'src/core/entities/unique_entity_id';
 
-enum ACTION {
+export enum ACTION {
   ATTACK,
   PROCTED,
   SUMMON,
@@ -11,7 +13,7 @@ export interface MatchHistoryProps {
   matchId: UniqueEntityID;
   playerId: UniqueEntityID;
   action: ACTION;
-  actionDescription: JSON;
+  actionDescription: any;
 }
 
 export class MatchHistory extends Entity<MatchHistoryProps> {
