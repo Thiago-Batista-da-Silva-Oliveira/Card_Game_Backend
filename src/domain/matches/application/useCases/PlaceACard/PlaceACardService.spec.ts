@@ -5,6 +5,7 @@ import { PlaceACardService } from './PlaceACardService';
 import { InMemoryCardRepository } from '@/domain/cards/application/repositories/tests/InMemoryCardRepository';
 import { makeMatch } from '../../repositories/tests/factories/makeMatch';
 import { makeCard } from '@/domain/cards/application/repositories/tests/factories/makeCard';
+import { TURN_STATUS } from '@/domain/matches/enterprise/entities/Turn';
 
 let inMemoryPlayerRepository: InMemoryPlayerRepository;
 let inMemoryMatchRepository: InMemoryMatchRepository;
@@ -33,7 +34,7 @@ describe('Place a card', () => {
 
     const match = makeMatch();
 
-    match.playersInMatchProps = [
+    match.playersInMatch = [
       {
         matchId: match.id,
         playerId: player1.id,
@@ -43,7 +44,15 @@ describe('Place a card', () => {
         playerId: player2.id,
       },
     ];
-    match.matchHistory = [];
+    match.turns = [
+      {
+        matchId: match.id,
+        playerId: player1.id,
+        status: TURN_STATUS.MAKING_THE_PLAY,
+        turn: 1,
+        historic: [],
+      },
+    ];
 
     inMemoryMatchRepository.items.push(match);
 
@@ -60,15 +69,16 @@ describe('Place a card', () => {
 
     expect(result.isRight()).toBe(true);
     expect(
-      inMemoryMatchRepository.items[0].playersInMatchProps?.find(
+      inMemoryMatchRepository.items[0].playersInMatch?.find(
         (data) => data.playerId === player1.id,
       )?.currentCardsState?.length,
     ).toBe(1);
     expect(
-      inMemoryMatchRepository.items[0].playersInMatchProps?.find(
+      inMemoryMatchRepository.items[0].playersInMatch?.find(
         (data) => data.playerId === player2.id,
       )?.currentCardsState?.length,
     ).toBe(undefined);
-    expect(inMemoryMatchRepository.items[0].matchHistory?.length).toBe(1);
+    expect(inMemoryMatchRepository.items[0].turns?.length).toBe(1);
+    expect(inMemoryMatchRepository.items[0].turns[0].historic?.length).toBe(1);
   });
 });

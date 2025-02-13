@@ -6,6 +6,7 @@ import { NotAllowedError } from '@/core/errors/errors/not-allowed-error';
 import { MatchRepository } from '../../repositories/IMatchRepository';
 import { Match } from '@/domain/matches/enterprise/entities/Match';
 import { UniqueEntityID } from '@/core/entities/unique_entity_id';
+import { TURN_STATUS } from '@/domain/matches/enterprise/entities/Turn';
 
 interface IRequest {
   playersIds: string[];
@@ -34,13 +35,22 @@ export class CreateMatchService {
     }
 
     const match = Match.create({
-      playersInMatchProps: [],
+      playersInMatch: [],
+      turns: [],
     });
 
-    match.playersInMatchProps = playersIds.map((playerId) => ({
+    match.playersInMatch = playersIds.map((playerId) => ({
       matchId: match.id,
       playerId: new UniqueEntityID(playerId),
     }));
+
+    match.turns[0] = {
+      matchId: match.id,
+      playerId: new UniqueEntityID(playersIds[0]),
+      status: TURN_STATUS.MAKING_THE_PLAY,
+      turn: 1,
+      historic: [],
+    };
     const createdMatch = await this.matchRepository.create(match);
     return right({ match: createdMatch });
   }

@@ -34,9 +34,7 @@ describe('Create Match', () => {
     expect(result.value).toEqual({
       match: inMemoryMatchRepository.items[0],
     });
-    expect(inMemoryMatchRepository.items[0].playersInMatchProps?.length).toBe(
-      2,
-    );
+    expect(inMemoryMatchRepository.items[0].playersInMatch?.length).toBe(2);
   });
 
   it('should not be able to create a match with invalid player ids', async () => {

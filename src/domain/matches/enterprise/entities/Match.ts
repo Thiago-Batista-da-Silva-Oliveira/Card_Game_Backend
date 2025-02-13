@@ -1,7 +1,7 @@
 import { Entity } from 'src/core/entities/entity';
 import { UniqueEntityID } from 'src/core/entities/unique_entity_id';
 import { PlayersInMatchProps } from './PlayersInMatch';
-import { MatchHistory } from './MatchHistory';
+import { TurnProps } from './Turn';
 
 export interface MatchProps {
   winnerId?: UniqueEntityID;
@@ -9,8 +9,9 @@ export interface MatchProps {
   status?: 'open' | 'finished';
   createdAt?: Date;
   updatedAt?: Date;
-  playersInMatchProps?: PlayersInMatchProps[];
-  matchHistory?: MatchHistory[];
+  playersInMatch?: PlayersInMatchProps[];
+  currentTurn?: number;
+  turns: TurnProps[];
 }
 
 export class Match extends Entity<MatchProps> {
@@ -26,12 +27,12 @@ export class Match extends Entity<MatchProps> {
     return this.props.updatedAt;
   }
 
-  get playersInMatchProps() {
-    return this.props.playersInMatchProps;
+  get playersInMatch() {
+    return this.props.playersInMatch;
   }
 
-  set playersInMatchProps(playersInMatchProps) {
-    this.props.playersInMatchProps = playersInMatchProps;
+  set playersInMatch(playersInMatch) {
+    this.props.playersInMatch = playersInMatch;
   }
 
   get winnerId() {
@@ -61,16 +62,28 @@ export class Match extends Entity<MatchProps> {
     this.touch();
   }
 
-  get matchHistory() {
-    return this.props.matchHistory;
+  get currentTurn() {
+    return this.props.currentTurn;
   }
 
-  set matchHistory(matchHistory) {
-    this.props.matchHistory = matchHistory;
+  set currentTurn(currentTurn) {
+    this.props.currentTurn = currentTurn;
+    this.touch();
+  }
+
+  get turns() {
+    return this.props.turns;
+  }
+
+  set turns(turns) {
+    this.props.turns = turns;
     this.touch();
   }
 
   static create(props: MatchProps, id?: UniqueEntityID) {
+    if (!props.currentTurn) {
+      props.currentTurn = 1;
+    }
     if (!props.status) {
       props.status = 'open';
     }
