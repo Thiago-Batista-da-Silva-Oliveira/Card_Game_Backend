@@ -25,4 +25,16 @@ export class InMemoryMatchRepository implements MatchRepository {
 
     return this.items[itemIndex];
   }
+
+  async findOpenMatchByPlayerId(playerId: string): Promise<Match | null> {
+    const match = this.items.find(
+      (data) =>
+        data.status === 'open' &&
+        data.playersInMatch
+          ?.map((player) => player.playerId.toValue())
+          .includes(playerId),
+    );
+
+    return match || null;
+  }
 }

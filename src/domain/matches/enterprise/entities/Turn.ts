@@ -5,7 +5,7 @@ import { MatchHistory } from './MatchHistory';
 export enum TURN_STATUS {
   WAITING_RESPONSE = 'WAITING_RESPONSE',
   MAKING_THE_PLAY = 'MAKING_THE_PLAY',
-  STATUS = 'FINISHED',
+  FINISHED = 'FINISHED',
 }
 
 export interface TurnProps {

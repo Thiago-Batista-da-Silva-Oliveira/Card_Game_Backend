@@ -7,6 +7,8 @@ export function makeMatch(
 ) {
   const match = Match.create(
     {
+      currentTurn: 1,
+      turns: [],
       ...override,
     },
     id,

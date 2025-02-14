@@ -4,4 +4,5 @@ export abstract class MatchRepository {
   abstract create(match: Match): Promise<Match>;
   abstract findById(matchId: string): Promise<Match | null>;
   abstract save(match: Match): Promise<Match>;
+  abstract findOpenMatchByPlayerId(playerId: string): Promise<Match | null>;
 }
