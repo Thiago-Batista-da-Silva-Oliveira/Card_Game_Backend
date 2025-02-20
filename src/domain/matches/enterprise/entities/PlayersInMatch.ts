@@ -1,19 +1,13 @@
 import { Entity } from 'src/core/entities/entity';
 import { UniqueEntityID } from 'src/core/entities/unique_entity_id';
-
-interface CurrentCardState {
-  cardId: UniqueEntityID;
-  position: number;
-  attackModification?: number;
-  deffenseModification?: number;
-}
+import { CurrentCardStateWatchedList } from './CurrentCardStateList';
 
 export interface PlayersInMatchProps {
   matchId: UniqueEntityID;
   playerId: UniqueEntityID;
   life?: number;
   remainingCardsInDeck?: number;
-  currentCardsState?: CurrentCardState[];
+  currentCardsState?: CurrentCardStateWatchedList;
 }
 
 export class PlayersInMatch extends Entity<PlayersInMatchProps> {
@@ -31,6 +25,14 @@ export class PlayersInMatch extends Entity<PlayersInMatchProps> {
 
   get remainingCardsInDeck() {
     return this.props.remainingCardsInDeck;
+  }
+
+  get currentCardsState() {
+    return this.props.currentCardsState;
+  }
+
+  set currentCardsState(currentCardsState) {
+    this.props.currentCardsState = currentCardsState;
   }
 
   static create(props: PlayersInMatchProps, id?: UniqueEntityID) {

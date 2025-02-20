@@ -13,9 +13,6 @@ import {
   ACTION,
   MatchHistory,
 } from '@/domain/matches/enterprise/entities/MatchHistory';
-import { CurrentCardState } from '@/domain/matches/enterprise/entities/CurrentCardState';
-import { CurrentCardStateWatchedList } from '@/domain/matches/enterprise/entities/CurrentCardStateList';
-import { MatchHistoryWatchedList } from '@/domain/matches/enterprise/entities/MatchHistoryList';
 
 interface IRequest {
   playerId: string;
@@ -35,7 +32,7 @@ type IOutput = Either<
 >;
 
 @Injectable()
-export class PlaceACardService {
+export class DeclareAttackService {
   constructor(
     private matchRepository: MatchRepository,
     private playerRepository: PlayerRepository,
@@ -57,60 +54,68 @@ export class PlaceACardService {
 
     if (!match || match.status === 'finished' || !match.playersInMatch) {
       return left(new MatchDoesNotExistError(matchId));
-    } //
+    }
+    const playerInMatch = match.playersInMatch?.find(
+      (player) => player.playerId.toValue() === playerId,
+    );
 
-    const playerInMatch = match.playersInMatch
-      ?.getItems()
-      .find((p) => p.playerId.equals(new UniqueEntityID(playerId)));
     if (!playerInMatch) {
       return left(new NotAllowedError());
     }
-
-    if (!playerInMatch.currentCardsState) {
-      playerInMatch.currentCardsState = new CurrentCardStateWatchedList([]);
-    }
-
-    playerInMatch.currentCardsState?.add(
-      CurrentCardState.create({
-        cardId: new UniqueEntityID(cardId),
-        position,
-      }),
-    );
-
-    match.playersInMatch?.update(match.playersInMatch.getItems());
-
     const card = await this.cardRepository.findById(cardId);
 
     if (!card) {
       return left(new CardDoesNotExistsError());
     }
 
-    const currentTurn = match.turns
-      ?.getItems()
-      .find((t) => t.turn === match.currentTurn);
-    if (!currentTurn) {
+    const currentTurnIndex = match.turns?.findIndex(
+      (data) => data.turn === match.currentTurn,
+    );
+
+    const playerInMatchIndex = match.playersInMatch?.findIndex(
+      (player) => player.playerId.toValue() === playerId,
+    );
+
+    if (playerInMatchIndex === undefined || playerInMatchIndex === -1) {
       return left(new NotAllowedError());
     }
 
-    if (!currentTurn.historic) {
-      currentTurn.historic = new MatchHistoryWatchedList([]);
+    if (currentTurnIndex === undefined || currentTurnIndex === -1) {
+      return left(new NotAllowedError());
     }
 
-    currentTurn.historic?.add(
-      MatchHistory.create({
-        matchId: new UniqueEntityID(matchId),
-        playerId: new UniqueEntityID(playerId),
-        action: ACTION.SUMMON,
-        actionDescription: {
-          type: ACTION.SUMMON,
-          position,
+    const updatedPlayer = {
+      ...match.playersInMatch[playerInMatchIndex],
+      currentCardsState: [
+        ...(match.playersInMatch[playerInMatchIndex].currentCardsState || []),
+        {
           cardId: new UniqueEntityID(cardId),
-          playerId: new UniqueEntityID(playerId),
+          position,
         },
-      }),
-    );
+      ],
+    };
 
-    match.turns?.update(match.turns.getItems());
+    match.playersInMatch[playerInMatchIndex] = updatedPlayer;
+
+    const updatedTurn = {
+      ...match.turns[currentTurnIndex],
+      historic: [
+        ...(match.turns[currentTurnIndex].historic || []),
+        MatchHistory.create({
+          matchId: new UniqueEntityID(matchId),
+          playerId: new UniqueEntityID(playerId),
+          action: ACTION.SUMMON,
+          actionDescription: {
+            type: ACTION.SUMMON,
+            position,
+            cardId: new UniqueEntityID(cardId),
+            playerId: new UniqueEntityID(playerId),
+          },
+        }),
+      ],
+    };
+
+    match.turns[currentTurnIndex] = updatedTurn;
 
     await this.matchRepository.save(match);
 

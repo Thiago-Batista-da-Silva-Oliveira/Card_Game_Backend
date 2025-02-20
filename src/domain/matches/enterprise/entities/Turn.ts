@@ -1,9 +1,10 @@
 import { Entity } from 'src/core/entities/entity';
 import { UniqueEntityID } from 'src/core/entities/unique_entity_id';
 import { MatchHistory } from './MatchHistory';
+import { MatchHistoryWatchedList } from './MatchHistoryList';
 
 export enum TURN_STATUS {
-  WAITING_RESPONSE = 'WAITING_RESPONSE',
+  WAITING_OPPONENT_RESPONSE = 'WAITING_OPPONENT_RESPONSE',
   MAKING_THE_PLAY = 'MAKING_THE_PLAY',
   FINISHED = 'FINISHED',
 }
@@ -13,7 +14,7 @@ export interface TurnProps {
   playerId: UniqueEntityID;
   matchId: UniqueEntityID;
   status: TURN_STATUS;
-  historic?: MatchHistory[];
+  historic?: MatchHistoryWatchedList;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -33,6 +34,10 @@ export class Turn extends Entity<TurnProps> {
 
   get historic() {
     return this.props.historic;
+  }
+
+  set historic(historic) {
+    this.props.historic = historic;
   }
 
   get createdAt() {

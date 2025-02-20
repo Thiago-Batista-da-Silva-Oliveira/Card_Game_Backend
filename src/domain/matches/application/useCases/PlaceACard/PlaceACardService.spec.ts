@@ -5,7 +5,11 @@ import { PlaceACardService } from './PlaceACardService';
 import { InMemoryCardRepository } from '@/domain/cards/application/repositories/tests/InMemoryCardRepository';
 import { makeMatch } from '../../repositories/tests/factories/makeMatch';
 import { makeCard } from '@/domain/cards/application/repositories/tests/factories/makeCard';
-import { TURN_STATUS } from '@/domain/matches/enterprise/entities/Turn';
+import { Turn, TURN_STATUS } from '@/domain/matches/enterprise/entities/Turn';
+import { PlayersInMatchWatchedList } from '@/domain/matches/enterprise/entities/PlayersInMatchList';
+import { PlayersInMatch } from '@/domain/matches/enterprise/entities/PlayersInMatch';
+import { TurnWatchedList } from '@/domain/matches/enterprise/entities/TurnList';
+import { MatchHistoryWatchedList } from '@/domain/matches/enterprise/entities/MatchHistoryList';
 
 let inMemoryPlayerRepository: InMemoryPlayerRepository;
 let inMemoryMatchRepository: InMemoryMatchRepository;
@@ -34,25 +38,33 @@ describe('Place a card', () => {
 
     const match = makeMatch();
 
-    match.playersInMatch = [
-      {
+    const playersInMatchWatchedList = new PlayersInMatchWatchedList();
+    playersInMatchWatchedList.add(
+      PlayersInMatch.create({
         matchId: match.id,
         playerId: player1.id,
-      },
-      {
+      }),
+    );
+    playersInMatchWatchedList.add(
+      PlayersInMatch.create({
         matchId: match.id,
         playerId: player2.id,
-      },
-    ];
-    match.turns = [
-      {
+      }),
+    );
+
+    match.playersInMatch = playersInMatchWatchedList;
+    const turnsWatchedList = new TurnWatchedList();
+    turnsWatchedList.add(
+      Turn.create({
         matchId: match.id,
         playerId: player1.id,
         status: TURN_STATUS.MAKING_THE_PLAY,
         turn: 1,
-        historic: [],
-      },
-    ];
+        historic: new MatchHistoryWatchedList(),
+      }),
+    );
+
+    match.turns = turnsWatchedList;
 
     inMemoryMatchRepository.items.push(match);
 
@@ -69,16 +81,19 @@ describe('Place a card', () => {
 
     expect(result.isRight()).toBe(true);
     expect(
-      inMemoryMatchRepository.items[0].playersInMatch?.find(
+      inMemoryMatchRepository.items[0].playersInMatch?.currentItems?.find(
         (data) => data.playerId === player1.id,
-      )?.currentCardsState?.length,
+      )?.currentCardsState?.currentItems?.length,
     ).toBe(1);
     expect(
-      inMemoryMatchRepository.items[0].playersInMatch?.find(
+      inMemoryMatchRepository.items[0].playersInMatch?.currentItems?.find(
         (data) => data.playerId === player2.id,
-      )?.currentCardsState?.length,
+      )?.currentCardsState?.currentItems.length,
     ).toBe(undefined);
-    expect(inMemoryMatchRepository.items[0].turns?.length).toBe(1);
-    expect(inMemoryMatchRepository.items[0].turns[0].historic?.length).toBe(1);
+    expect(inMemoryMatchRepository.items[0].turns?.currentItems.length).toBe(1);
+    expect(
+      inMemoryMatchRepository.items[0].turns.currentItems[0].historic
+        ?.currentItems?.length,
+    ).toBe(1);
   });
 });

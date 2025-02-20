@@ -7,6 +7,8 @@ import { MatchRepository } from '../../repositories/IMatchRepository';
 import { Match } from '@/domain/matches/enterprise/entities/Match';
 import { UniqueEntityID } from '@/core/entities/unique_entity_id';
 import { TURN_STATUS } from '@/domain/matches/enterprise/entities/Turn';
+import { PlayersInMatch } from '@/domain/matches/enterprise/entities/PlayersInMatch';
+import { PlayersInMatchWatchedList } from '@/domain/matches/enterprise/entities/PlayersInMatchList';
 
 interface IRequest {
   playersIds: string[];
@@ -35,14 +37,21 @@ export class CreateMatchService {
     }
 
     const match = Match.create({
-      playersInMatch: [],
       turns: [],
     });
 
-    match.playersInMatch = playersIds.map((playerId) => ({
-      matchId: match.id,
-      playerId: new UniqueEntityID(playerId),
-    }));
+    const matchHasPlayers = new PlayersInMatchWatchedList([]);
+
+    const createPlayersInMatch = playersIds.map((playerId) =>
+      PlayersInMatch.create({
+        matchId: match.id,
+        playerId: new UniqueEntityID(playerId),
+      }),
+    );
+
+    matchHasPlayers.update(createPlayersInMatch);
+
+    match.playersInMatch = matchHasPlayers;
 
     match.turns[0] = {
       matchId: match.id,

@@ -1,7 +1,7 @@
 import { Entity } from 'src/core/entities/entity';
 import { UniqueEntityID } from 'src/core/entities/unique_entity_id';
-import { PlayersInMatchProps } from './PlayersInMatch';
-import { TurnProps } from './Turn';
+import { PlayersInMatchWatchedList } from './PlayersInMatchList';
+import { TurnWatchedList } from './TurnList';
 
 export interface MatchProps {
   winnerId?: UniqueEntityID;
@@ -9,9 +9,9 @@ export interface MatchProps {
   status?: 'open' | 'finished';
   createdAt?: Date;
   updatedAt?: Date;
-  playersInMatch?: PlayersInMatchProps[];
+  playersInMatch?: PlayersInMatchWatchedList;
   currentTurn?: number;
-  turns: TurnProps[];
+  turns: TurnWatchedList;
 }
 
 export class Match extends Entity<MatchProps> {
