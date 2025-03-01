@@ -40,34 +40,36 @@ export class FinishTurnService {
       return left(new MatchDoesNotExistError(playerId));
     }
 
-    const currentTurnIndex = findMatch.turns.findIndex(
-      (data) => data.turn === findMatch.currentTurn,
-    );
+    const currentTurn = findMatch.turns
+      ?.getItems()
+      .find((t) => t.turn === findMatch.currentTurn);
+    if (!currentTurn) {
+      return left(new NotAllowedError());
+    }
 
-    if (
-      currentTurnIndex === -1 ||
-      findMatch.turns
-        .find((turn) => turn.turn === findMatch.currentTurn)
-        ?.playerId.toValue() !== playerId
-    ) {
+    if (!currentTurn || currentTurn.playerId.toValue() !== playerId) {
       return left(new NotAllowedError());
     }
 
     const newTurn = findMatch.currentTurn ? findMatch.currentTurn + 1 : 1;
 
-    findMatch.turns[currentTurnIndex].status = TURN_STATUS.FINISHED;
-    findMatch.turns = [
-      ...findMatch.turns,
+    currentTurn.status = TURN_STATUS.FINISHED;
+
+    findMatch.turns?.add(
       Turn.create({
         matchId: findMatch.id,
         status: TURN_STATUS.MAKING_THE_PLAY,
         turn: newTurn,
         playerId:
-          findMatch.playersInMatch?.find(
-            (player) => player.playerId.toValue() !== playerId,
-          )?.playerId || new UniqueEntityID(),
+          findMatch.playersInMatch
+            ?.getItems()
+            ?.find((player) => player.playerId.toValue() !== playerId)
+            ?.playerId || new UniqueEntityID(),
       }),
-    ];
+    );
+
+    findMatch.turns?.update(findMatch.turns.getItems());
+
     findMatch.currentTurn = newTurn;
     await this.matchRepository.save(findMatch);
 

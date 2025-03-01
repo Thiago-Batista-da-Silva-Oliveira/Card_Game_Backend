@@ -32,6 +32,10 @@ export class Turn extends Entity<TurnProps> {
     return this.props.status;
   }
 
+  set status(status) {
+    this.props.status = status;
+  }
+
   get historic() {
     return this.props.historic;
   }

@@ -11,7 +11,7 @@ export interface MatchProps {
   updatedAt?: Date;
   playersInMatch?: PlayersInMatchWatchedList;
   currentTurn?: number;
-  turns: TurnWatchedList;
+  turns?: TurnWatchedList;
 }
 
 export class Match extends Entity<MatchProps> {

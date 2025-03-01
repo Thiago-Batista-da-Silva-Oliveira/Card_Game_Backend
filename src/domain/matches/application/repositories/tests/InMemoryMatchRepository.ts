@@ -31,6 +31,7 @@ export class InMemoryMatchRepository implements MatchRepository {
       (data) =>
         data.status === 'open' &&
         data.playersInMatch
+          ?.getItems()
           ?.map((player) => player.playerId.toValue())
           .includes(playerId),
     );

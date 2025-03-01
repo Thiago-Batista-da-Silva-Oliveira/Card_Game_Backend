@@ -3,8 +3,12 @@ import { InMemoryMatchRepository } from '../../repositories/tests/InMemoryMatchR
 import { makePlayer } from '@/domain/players/application/repositories/tests/factories/makePlayer';
 import { FinishTurnService } from './FinishTurnService';
 import { makeMatch } from '../../repositories/tests/factories/makeMatch';
-import { TURN_STATUS } from '@/domain/matches/enterprise/entities/Turn';
+import { Turn, TURN_STATUS } from '@/domain/matches/enterprise/entities/Turn';
 import { NotAllowedError } from '@/core/errors/errors/not-allowed-error';
+import { PlayersInMatchWatchedList } from '@/domain/matches/enterprise/entities/PlayersInMatchList';
+import { PlayersInMatch } from '@/domain/matches/enterprise/entities/PlayersInMatch';
+import { TurnWatchedList } from '@/domain/matches/enterprise/entities/TurnList';
+import { MatchHistoryWatchedList } from '@/domain/matches/enterprise/entities/MatchHistoryList';
 
 let inMemoryPlayerRepository: InMemoryPlayerRepository;
 let inMemoryMatchRepository: InMemoryMatchRepository;
@@ -30,25 +34,33 @@ describe('Finish turn', () => {
 
     const match = makeMatch();
 
-    match.playersInMatch = [
-      {
+    const playersInMatchWatchedList = new PlayersInMatchWatchedList();
+    playersInMatchWatchedList.add(
+      PlayersInMatch.create({
         matchId: match.id,
         playerId: player1.id,
-      },
-      {
+      }),
+    );
+    playersInMatchWatchedList.add(
+      PlayersInMatch.create({
         matchId: match.id,
         playerId: player2.id,
-      },
-    ];
-    match.turns = [
-      {
+      }),
+    );
+
+    match.playersInMatch = playersInMatchWatchedList;
+    const turnsWatchedList = new TurnWatchedList();
+    turnsWatchedList.add(
+      Turn.create({
         matchId: match.id,
         playerId: player1.id,
         status: TURN_STATUS.MAKING_THE_PLAY,
         turn: 1,
-        historic: [],
-      },
-    ];
+        historic: new MatchHistoryWatchedList(),
+      }),
+    );
+
+    match.turns = turnsWatchedList;
 
     inMemoryMatchRepository.items.push(match);
 
@@ -58,7 +70,7 @@ describe('Finish turn', () => {
 
     expect(result.isRight()).toBe(true);
     expect(inMemoryMatchRepository.items[0].currentTurn).toBe(2);
-    expect(inMemoryMatchRepository.items[0].turns.length).toBe(2);
+    expect(inMemoryMatchRepository.items[0].turns?.getItems().length).toBe(2);
   });
 
   it('should not be able to finish a turn that is not yours', async () => {
@@ -70,25 +82,33 @@ describe('Finish turn', () => {
 
     const match = makeMatch();
 
-    match.playersInMatch = [
-      {
+    const playersInMatchWatchedList = new PlayersInMatchWatchedList();
+    playersInMatchWatchedList.add(
+      PlayersInMatch.create({
         matchId: match.id,
         playerId: player1.id,
-      },
-      {
+      }),
+    );
+    playersInMatchWatchedList.add(
+      PlayersInMatch.create({
         matchId: match.id,
         playerId: player2.id,
-      },
-    ];
-    match.turns = [
-      {
+      }),
+    );
+
+    match.playersInMatch = playersInMatchWatchedList;
+    const turnsWatchedList = new TurnWatchedList();
+    turnsWatchedList.add(
+      Turn.create({
         matchId: match.id,
         playerId: player1.id,
         status: TURN_STATUS.MAKING_THE_PLAY,
         turn: 1,
-        historic: [],
-      },
-    ];
+        historic: new MatchHistoryWatchedList(),
+      }),
+    );
+
+    match.turns = turnsWatchedList;
 
     inMemoryMatchRepository.items.push(match);
 

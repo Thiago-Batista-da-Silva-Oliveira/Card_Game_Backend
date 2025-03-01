@@ -6,9 +6,11 @@ import { NotAllowedError } from '@/core/errors/errors/not-allowed-error';
 import { MatchRepository } from '../../repositories/IMatchRepository';
 import { Match } from '@/domain/matches/enterprise/entities/Match';
 import { UniqueEntityID } from '@/core/entities/unique_entity_id';
-import { TURN_STATUS } from '@/domain/matches/enterprise/entities/Turn';
+import { Turn, TURN_STATUS } from '@/domain/matches/enterprise/entities/Turn';
 import { PlayersInMatch } from '@/domain/matches/enterprise/entities/PlayersInMatch';
 import { PlayersInMatchWatchedList } from '@/domain/matches/enterprise/entities/PlayersInMatchList';
+import { TurnWatchedList } from '@/domain/matches/enterprise/entities/TurnList';
+import { MatchHistoryWatchedList } from '@/domain/matches/enterprise/entities/MatchHistoryList';
 
 interface IRequest {
   playersIds: string[];
@@ -36,9 +38,7 @@ export class CreateMatchService {
       }
     }
 
-    const match = Match.create({
-      turns: [],
-    });
+    const match = Match.create({});
 
     const matchHasPlayers = new PlayersInMatchWatchedList([]);
 
@@ -53,13 +53,20 @@ export class CreateMatchService {
 
     match.playersInMatch = matchHasPlayers;
 
-    match.turns[0] = {
-      matchId: match.id,
-      playerId: new UniqueEntityID(playersIds[0]),
-      status: TURN_STATUS.MAKING_THE_PLAY,
-      turn: 1,
-      historic: [],
-    };
+    const matchTurn = new TurnWatchedList();
+
+    matchTurn.add(
+      Turn.create({
+        matchId: match.id,
+        playerId: new UniqueEntityID(playersIds[0]),
+        status: TURN_STATUS.MAKING_THE_PLAY,
+        turn: 1,
+        historic: new MatchHistoryWatchedList(),
+      }),
+    );
+
+    match.turns = matchTurn;
+
     const createdMatch = await this.matchRepository.create(match);
     return right({ match: createdMatch });
   }
