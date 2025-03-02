@@ -1,0 +1,160 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Player {
+  id             String           @id @default(uuid())
+  name           String
+  email          String           @unique
+  password       String
+  accessType     String
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  decks          Deck[]
+  matchsWon      Match[]
+  turnHistory    TurnHistory[]
+  playersInMatch PlayersInMatch[]
+
+  @@map("players")
+}
+
+model Card {
+  id               String             @id @default(uuid())
+  name             String
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  deckHasCards     DeckHasCard[]
+  CurrentCardState CurrentCardState[]
+
+  @@map("cards")
+}
+
+model DeckHasCard {
+  cardId String
+  card   Card   @relation(fields: [cardId], references: [id])
+  deckId String
+  deck   Deck   @relation(fields: [deckId], references: [id])
+
+  @@id([cardId, deckId])
+  @@map("deck_has_card")
+}
+
+model Deck {
+  id           String        @id @default(uuid())
+  name         String
+  playerId     String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  player       Player        @relation(fields: [playerId], references: [id])
+  deckHasCards DeckHasCard[]
+
+  @@map("decks")
+}
+
+enum MatchStatus {
+  open
+  finished
+}
+
+model Match {
+  id             String           @id @default(uuid())
+  winnerId       String?
+  finishedAt     DateTime?
+  currentTurn    Float?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  status         MatchStatus
+  winner         Player?          @relation(fields: [winnerId], references: [id])
+  turns          Turn[]
+  playersInMatch PlayersInMatch[]
+
+  @@map("matches")
+}
+
+enum TurnStatus {
+  WAITING_OPPONENT_RESPONSE
+  MAKING_THE_PLAY
+  FINISHED
+}
+
+model Turn {
+  id          String        @id @default(uuid())
+  matchId     String
+  turn        Float
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  status      TurnStatus
+  match       Match         @relation(fields: [matchId], references: [id])
+  turnHistory TurnHistory[]
+
+  @@map("turns")
+}
+
+enum ACTION_RESULT {
+  BLOCKED
+  DIRECT_ATTACK
+}
+
+model TurnHistory {
+  id                String        @id @default(uuid())
+  masterActionId    String?
+  turnId            String
+  playerId          String
+  action            ACTION_RESULT
+  actionDescription Json
+  actionResult      Json
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  turnHistory TurnHistory? @relation("TurnHistoryToTurnHistory", fields: [masterActionId], references: [id])
+
+  turn           Turn          @relation(fields: [turnId], references: [id])
+  player         Player        @relation(fields: [playerId], references: [id])
+  chainedActions TurnHistory[] @relation("TurnHistoryToTurnHistory")
+
+  @@map("turn_history")
+}
+
+model PlayersInMatch {
+  id                   String   @id @default(uuid())
+  matchId              String
+  playerId             String
+  life                 Float    @default(30)
+  remainingCardsInDeck Float    @default(0)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  match            Match              @relation(fields: [matchId], references: [id])
+  player           Player             @relation(fields: [playerId], references: [id])
+  currentCardState CurrentCardState[]
+
+  @@map("players_in_match")
+}
+
+model CurrentCardState {
+  id                   String @id @default(uuid())
+  cardId               String
+  playerId             String
+  position             Float
+  attackModification   Float?
+  deffenseModification Float?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  card   Card           @relation(fields: [cardId], references: [id])
+  player PlayersInMatch @relation(fields: [playerId], references: [id])
+
+  @@map("current_card_state")
+}

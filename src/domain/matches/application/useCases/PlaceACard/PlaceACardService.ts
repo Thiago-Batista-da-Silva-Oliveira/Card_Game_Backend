@@ -11,11 +11,11 @@ import { CardDoesNotExistsError } from '@/domain/cards/application/useCases/erro
 import { UniqueEntityID } from '@/core/entities/unique_entity_id';
 import {
   ACTION,
-  MatchHistory,
-} from '@/domain/matches/enterprise/entities/MatchHistory';
+  TurnHistory,
+} from '@/domain/matches/enterprise/entities/TurnHistory';
 import { CurrentCardState } from '@/domain/matches/enterprise/entities/CurrentCardState';
 import { CurrentCardStateWatchedList } from '@/domain/matches/enterprise/entities/CurrentCardStateList';
-import { MatchHistoryWatchedList } from '@/domain/matches/enterprise/entities/MatchHistoryList';
+import { TurnHistoryWatchedList } from '@/domain/matches/enterprise/entities/TurnHistoryList';
 
 interface IRequest {
   playerId: string;
@@ -72,6 +72,7 @@ export class PlaceACardService {
 
     playerInMatch.currentCardsState?.add(
       CurrentCardState.create({
+        playerId: new UniqueEntityID(playerId),
         cardId: new UniqueEntityID(cardId),
         position,
       }),
@@ -93,12 +94,12 @@ export class PlaceACardService {
     }
 
     if (!currentTurn.historic) {
-      currentTurn.historic = new MatchHistoryWatchedList([]);
+      currentTurn.historic = new TurnHistoryWatchedList([]);
     }
 
     currentTurn.historic?.add(
-      MatchHistory.create({
-        matchId: new UniqueEntityID(matchId),
+      TurnHistory.create({
+        turnId: new UniqueEntityID(currentTurn.id.toString()),
         playerId: new UniqueEntityID(playerId),
         action: ACTION.SUMMON,
         actionDescription: {

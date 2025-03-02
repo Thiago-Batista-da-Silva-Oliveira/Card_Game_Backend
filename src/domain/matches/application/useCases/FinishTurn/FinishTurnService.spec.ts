@@ -8,7 +8,7 @@ import { NotAllowedError } from '@/core/errors/errors/not-allowed-error';
 import { PlayersInMatchWatchedList } from '@/domain/matches/enterprise/entities/PlayersInMatchList';
 import { PlayersInMatch } from '@/domain/matches/enterprise/entities/PlayersInMatch';
 import { TurnWatchedList } from '@/domain/matches/enterprise/entities/TurnList';
-import { MatchHistoryWatchedList } from '@/domain/matches/enterprise/entities/MatchHistoryList';
+import { TurnHistoryWatchedList } from '@/domain/matches/enterprise/entities/TurnHistoryList';
 
 let inMemoryPlayerRepository: InMemoryPlayerRepository;
 let inMemoryMatchRepository: InMemoryMatchRepository;
@@ -56,7 +56,7 @@ describe('Finish turn', () => {
         playerId: player1.id,
         status: TURN_STATUS.MAKING_THE_PLAY,
         turn: 1,
-        historic: new MatchHistoryWatchedList(),
+        historic: new TurnHistoryWatchedList(),
       }),
     );
 
@@ -104,7 +104,7 @@ describe('Finish turn', () => {
         playerId: player1.id,
         status: TURN_STATUS.MAKING_THE_PLAY,
         turn: 1,
-        historic: new MatchHistoryWatchedList(),
+        historic: new TurnHistoryWatchedList(),
       }),
     );
 

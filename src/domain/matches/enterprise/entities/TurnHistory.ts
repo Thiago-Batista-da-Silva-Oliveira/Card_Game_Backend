@@ -22,18 +22,18 @@ type ActionResult =
   | { type: ACTION_RESULT.BLOCKED; attackerId: number; attackerReducedLife: number; targetId: number; targetIdReducedLift: number}
   | { type: ACTION_RESULT.DIRECT_ATTACK; reducedLife: number}
 
-export interface MatchHistoryProps {
-  matchId: UniqueEntityID;
+export interface TurnHistoryProps {
+  turnId: UniqueEntityID;
   playerId: UniqueEntityID;
   masterActionId?: UniqueEntityID;
   action: ACTION;
   actionDescription: ActionDescription;
   actionResult?: ActionResult;
   createdAt?: Date;
-  chainedActions?: MatchHistoryProps[];
+  chainedActions?: TurnHistoryProps[];
 }
 
-export class MatchHistory extends Entity<MatchHistoryProps> {
+export class TurnHistory extends Entity<TurnHistoryProps> {
   get playerId() {
     return this.props.playerId;
   }
@@ -43,8 +43,8 @@ export class MatchHistory extends Entity<MatchHistoryProps> {
   get masterActionId () {
     return this.props.masterActionId;
   }
-  get matchId() {
-    return this.props.matchId;
+  get turnId() {
+    return this.props.turnId;
   }
 
   get action() {
@@ -59,12 +59,12 @@ export class MatchHistory extends Entity<MatchHistoryProps> {
     return this.props.actionResult;
   }
 
-  static create(props: MatchHistoryProps, id?: UniqueEntityID) {
+  static create(props: TurnHistoryProps, id?: UniqueEntityID) {
     if (!props.createdAt) {
       props.createdAt = new Date();
     }
-    const matchHistory = new MatchHistory(props, id);
+    const turnHistory = new TurnHistory(props, id);
 
-    return matchHistory;
+    return turnHistory;
   }
 }

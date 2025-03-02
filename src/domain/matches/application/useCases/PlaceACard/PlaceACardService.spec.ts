@@ -9,7 +9,7 @@ import { Turn, TURN_STATUS } from '@/domain/matches/enterprise/entities/Turn';
 import { PlayersInMatchWatchedList } from '@/domain/matches/enterprise/entities/PlayersInMatchList';
 import { PlayersInMatch } from '@/domain/matches/enterprise/entities/PlayersInMatch';
 import { TurnWatchedList } from '@/domain/matches/enterprise/entities/TurnList';
-import { MatchHistoryWatchedList } from '@/domain/matches/enterprise/entities/MatchHistoryList';
+import { TurnHistoryWatchedList } from '@/domain/matches/enterprise/entities/TurnHistoryList';
 
 let inMemoryPlayerRepository: InMemoryPlayerRepository;
 let inMemoryMatchRepository: InMemoryMatchRepository;
@@ -60,7 +60,7 @@ describe('Place a card', () => {
         playerId: player1.id,
         status: TURN_STATUS.MAKING_THE_PLAY,
         turn: 1,
-        historic: new MatchHistoryWatchedList(),
+        historic: new TurnHistoryWatchedList(),
       }),
     );
 
@@ -92,7 +92,7 @@ describe('Place a card', () => {
     ).toBe(undefined);
     expect(inMemoryMatchRepository.items[0].turns?.currentItems.length).toBe(1);
     expect(
-      inMemoryMatchRepository.items[0].turns.currentItems[0].historic
+      inMemoryMatchRepository?.items[0]?.turns?.currentItems[0].historic
         ?.currentItems?.length,
     ).toBe(1);
   });

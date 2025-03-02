@@ -10,7 +10,7 @@ import { Turn, TURN_STATUS } from '@/domain/matches/enterprise/entities/Turn';
 import { PlayersInMatch } from '@/domain/matches/enterprise/entities/PlayersInMatch';
 import { PlayersInMatchWatchedList } from '@/domain/matches/enterprise/entities/PlayersInMatchList';
 import { TurnWatchedList } from '@/domain/matches/enterprise/entities/TurnList';
-import { MatchHistoryWatchedList } from '@/domain/matches/enterprise/entities/MatchHistoryList';
+import { TurnHistoryWatchedList } from '@/domain/matches/enterprise/entities/TurnHistoryList';
 
 interface IRequest {
   playersIds: string[];
@@ -61,7 +61,7 @@ export class CreateMatchService {
         playerId: new UniqueEntityID(playersIds[0]),
         status: TURN_STATUS.MAKING_THE_PLAY,
         turn: 1,
-        historic: new MatchHistoryWatchedList(),
+        historic: new TurnHistoryWatchedList(),
       }),
     );
 

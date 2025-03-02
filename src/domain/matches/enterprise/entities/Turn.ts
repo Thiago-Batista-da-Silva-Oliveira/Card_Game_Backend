@@ -1,7 +1,6 @@
 import { Entity } from 'src/core/entities/entity';
 import { UniqueEntityID } from 'src/core/entities/unique_entity_id';
-import { MatchHistory } from './MatchHistory';
-import { MatchHistoryWatchedList } from './MatchHistoryList';
+import { TurnHistoryWatchedList } from './TurnHistoryList';
 
 export enum TURN_STATUS {
   WAITING_OPPONENT_RESPONSE = 'WAITING_OPPONENT_RESPONSE',
@@ -14,7 +13,7 @@ export interface TurnProps {
   playerId: UniqueEntityID;
   matchId: UniqueEntityID;
   status: TURN_STATUS;
-  historic?: MatchHistoryWatchedList;
+  historic?: TurnHistoryWatchedList;
   createdAt?: Date;
   updatedAt?: Date;
 }

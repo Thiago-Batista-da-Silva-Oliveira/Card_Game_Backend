@@ -3,6 +3,7 @@ import { UniqueEntityID } from 'src/core/entities/unique_entity_id';
 
 export interface CurrentCardStateProps {
   cardId: UniqueEntityID;
+  playerId: UniqueEntityID;
   position: number;
   attackModification?: number;
   deffenseModification?: number;
@@ -11,6 +12,10 @@ export interface CurrentCardStateProps {
 export class CurrentCardState extends Entity<CurrentCardStateProps> {
   get cardId() {
     return this.props.cardId;
+  }
+
+  get playerId() {
+    return this.props.playerId;
   }
 
   get position() {
