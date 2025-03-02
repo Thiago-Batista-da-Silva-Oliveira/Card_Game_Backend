@@ -1,4 +1,5 @@
 import { Match, MatchProps } from '@/domain/matches/enterprise/entities/Match';
+import { TurnWatchedList } from '@/domain/matches/enterprise/entities/TurnList';
 import { UniqueEntityID } from 'src/core/entities/unique_entity_id';
 
 export function makeMatch(
@@ -8,7 +9,7 @@ export function makeMatch(
   const match = Match.create(
     {
       currentTurn: 1,
-      turns: [],
+      turns: new TurnWatchedList(),
       ...override,
     },
     id,
