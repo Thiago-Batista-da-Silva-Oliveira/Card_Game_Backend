@@ -7,6 +7,8 @@ export interface PlayerProps {
   password: string;
   status?: 'active' | 'inactive';
   accessType?: 'player' | 'admin';
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export class Player extends Entity<PlayerProps> {
@@ -27,6 +29,14 @@ export class Player extends Entity<PlayerProps> {
 
   get accessType() {
     return this.props.accessType;
+  }
+
+  get createdAt() {
+    return this.props.createdAt;
+  }
+
+  get updatedAt() {
+    return this.props.updatedAt;
   }
 
   static create(props: PlayerProps, id?: UniqueEntityID) {

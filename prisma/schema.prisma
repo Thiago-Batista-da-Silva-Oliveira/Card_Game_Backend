@@ -13,12 +13,23 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum AccessType {
+  player
+  admin
+}
+
+enum Status {
+  active
+  inactive
+}
+
 model Player {
   id             String           @id @default(uuid())
   name           String
   email          String           @unique
   password       String
-  accessType     String
+  accessType     AccessType
+  status         Status
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
   decks          Deck[]
