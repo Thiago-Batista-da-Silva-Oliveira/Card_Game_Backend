@@ -1,6 +1,8 @@
 import { Entity } from 'src/core/entities/entity';
 import { UniqueEntityID } from 'src/core/entities/unique_entity_id';
 
+// position 0 - hand, position - 100 - graveyard
+
 export interface CurrentCardStateProps {
   cardId: UniqueEntityID;
   playerId: UniqueEntityID;

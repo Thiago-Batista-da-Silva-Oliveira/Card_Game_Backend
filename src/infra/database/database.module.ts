@@ -6,6 +6,8 @@ import { CardRepository } from '@/domain/cards/application/repositories';
 import { PrismaCardsRepository } from './prisma/repositories/prisma-card-repository';
 import { PrismaDecksRepository } from './prisma/repositories/prisma-deck-repository';
 import { DeckRepository } from '@/domain/cards/application/repositories/IDeckRepository';
+import { MatchRepository } from '@/domain/matches/application/repositories/IMatchRepository';
+import { PrismaMatchsRepository } from './prisma/repositories/prisma-match-repository';
 
 @Module({
   providers: [
@@ -21,6 +23,10 @@ import { DeckRepository } from '@/domain/cards/application/repositories/IDeckRep
     {
       provide: DeckRepository,
       useClass: PrismaDecksRepository,
+    },
+    {
+      provide: MatchRepository,
+      useClass: PrismaMatchsRepository,
     },
   ],
   exports: [PrismaService],

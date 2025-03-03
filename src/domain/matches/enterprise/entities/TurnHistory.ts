@@ -30,6 +30,7 @@ export interface TurnHistoryProps {
   actionDescription: ActionDescription;
   actionResult?: ActionResult;
   createdAt?: Date;
+  updatedAt?: Date;
   chainedActions?: TurnHistoryProps[];
 }
 
@@ -57,6 +58,10 @@ export class TurnHistory extends Entity<TurnHistoryProps> {
 
   get actionResult() {
     return this.props.actionResult;
+  }
+
+  get updatedAt() {
+    return this.props.updatedAt;
   }
 
   static create(props: TurnHistoryProps, id?: UniqueEntityID) {
