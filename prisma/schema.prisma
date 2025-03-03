@@ -51,16 +51,6 @@ model Card {
   @@map("cards")
 }
 
-model DeckHasCard {
-  cardId String
-  card   Card   @relation(fields: [cardId], references: [id])
-  deckId String
-  deck   Deck   @relation(fields: [deckId], references: [id])
-
-  @@id([cardId, deckId])
-  @@map("deck_has_card")
-}
-
 model Deck {
   id           String        @id @default(uuid())
   name         String
@@ -71,6 +61,16 @@ model Deck {
   deckHasCards DeckHasCard[]
 
   @@map("decks")
+}
+
+model DeckHasCard {
+  cardId String
+  card   Card   @relation(fields: [cardId], references: [id])
+  deckId String
+  deck   Deck   @relation(fields: [deckId], references: [id])
+
+  @@id([cardId, deckId])
+  @@map("deck_has_card")
 }
 
 enum MatchStatus {

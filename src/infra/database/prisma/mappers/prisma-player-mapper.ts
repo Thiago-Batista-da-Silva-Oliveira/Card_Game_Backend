@@ -26,7 +26,7 @@ export class PrismaPlayerMapper {
       accessType: player.accessType || 'player',
       status: player.status || 'active',
       createdAt: player.createdAt,
-      updatedAt: player.updatedAt,
+      updatedAt: new Date(),
     };
   }
 }

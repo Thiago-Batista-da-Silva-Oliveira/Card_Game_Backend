@@ -6,6 +6,8 @@ export interface DeckProps {
   name: string;
   playerId: UniqueEntityID;
   deckHasCards?: DeckHasCardWatchedList;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export class Deck extends Entity<DeckProps> {
@@ -23,6 +25,14 @@ export class Deck extends Entity<DeckProps> {
 
   get deckHasCards() {
     return this.props.deckHasCards ?? new DeckHasCardWatchedList();
+  }
+
+  get createdAt() {
+    return this.props.createdAt;
+  }
+
+  get updatedAt() {
+    return this.props.updatedAt;
   }
 
   set deckHasCards(deckHasCards: DeckHasCardWatchedList) {
