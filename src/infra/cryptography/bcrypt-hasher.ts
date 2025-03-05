@@ -1,8 +1,4 @@
-/* eslint-disable @typescript-eslint/require-await */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-import { HashProviderModel } from '../model/IHashProvider';
+import { HashProviderModel } from '@/domain/players/application/providers/hashProvider/model/IHashProvider';
 import bcrypt from 'bcryptjs';
 
 export class HashProvider implements HashProviderModel {

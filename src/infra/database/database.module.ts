@@ -29,6 +29,12 @@ import { PrismaMatchsRepository } from './prisma/repositories/prisma-match-repos
       useClass: PrismaMatchsRepository,
     },
   ],
-  exports: [PrismaService],
+  exports: [
+    PrismaService,
+    PlayerRepository,
+    CardRepository,
+    DeckRepository,
+    MatchRepository,
+  ],
 })
 export class DatabaseModule {}
