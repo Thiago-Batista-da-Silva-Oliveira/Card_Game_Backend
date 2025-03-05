@@ -11,12 +11,16 @@ export interface DeckProps {
 }
 
 export class Deck extends Entity<DeckProps> {
+  touch() {
+    this.props.updatedAt = new Date();
+  }
   get name() {
     return this.props.name;
   }
 
   set name(name: string) {
     this.props.name = name;
+    this.touch();
   }
 
   get playerId() {
@@ -37,6 +41,7 @@ export class Deck extends Entity<DeckProps> {
 
   set deckHasCards(deckHasCards: DeckHasCardWatchedList) {
     this.props.deckHasCards = deckHasCards;
+    this.touch();
   }
 
   static create(props: DeckProps, id?: UniqueEntityID) {

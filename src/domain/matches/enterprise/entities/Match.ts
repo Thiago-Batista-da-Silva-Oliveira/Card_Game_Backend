@@ -33,6 +33,7 @@ export class Match extends Entity<MatchProps> {
 
   set playersInMatch(playersInMatch) {
     this.props.playersInMatch = playersInMatch;
+    this.touch();
   }
 
   get winnerId() {
@@ -86,6 +87,10 @@ export class Match extends Entity<MatchProps> {
     }
     if (!props.status) {
       props.status = 'open';
+    }
+
+    if (!props.createdAt) {
+      props.createdAt = new Date();
     }
     const match = new Match(props, id);
 

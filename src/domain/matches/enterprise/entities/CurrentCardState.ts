@@ -9,6 +9,8 @@ export interface CurrentCardStateProps {
   position: number;
   attackModification?: number;
   deffenseModification?: number;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export class CurrentCardState extends Entity<CurrentCardStateProps> {
@@ -33,6 +35,9 @@ export class CurrentCardState extends Entity<CurrentCardStateProps> {
   }
 
   static create(props: CurrentCardStateProps, id?: UniqueEntityID) {
+    if (!props.createdAt) {
+      props.createdAt = new Date();
+    }
     const currentCardsState = new CurrentCardState(props, id);
 
     return currentCardsState;

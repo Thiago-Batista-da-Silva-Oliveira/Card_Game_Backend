@@ -35,6 +35,9 @@ export interface TurnHistoryProps {
 }
 
 export class TurnHistory extends Entity<TurnHistoryProps> {
+  touch() {
+    this.props.updatedAt = new Date();
+  }
   get playerId() {
     return this.props.playerId;
   }

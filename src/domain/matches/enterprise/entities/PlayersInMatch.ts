@@ -8,9 +8,14 @@ export interface PlayersInMatchProps {
   life?: number;
   remainingCardsInDeck?: number;
   currentCardsState?: CurrentCardStateWatchedList;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export class PlayersInMatch extends Entity<PlayersInMatchProps> {
+  touch() {
+    this.props.updatedAt = new Date();
+  }
   get playerId() {
     return this.props.playerId;
   }
@@ -33,11 +38,16 @@ export class PlayersInMatch extends Entity<PlayersInMatchProps> {
 
   set currentCardsState(currentCardsState) {
     this.props.currentCardsState = currentCardsState;
+    this.touch();
   }
 
   static create(props: PlayersInMatchProps, id?: UniqueEntityID) {
     if (!props.life) {
       props.life = 30;
+    }
+
+    if (!props.createdAt) {
+      props.createdAt = new Date();
     }
 
     if (!props.remainingCardsInDeck) {
