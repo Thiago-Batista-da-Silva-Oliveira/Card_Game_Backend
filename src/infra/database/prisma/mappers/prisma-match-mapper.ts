@@ -103,39 +103,49 @@ export class PrismaMatchMapper {
       updatedAt: new Date(),
       currentTurn: match.currentTurn ?? 0,
       playersInMatch: {
-        create: match.playersInMatch?.getNewItems().map((player) => ({
-          playerId: player.playerId.toString(),
-          life: player.life,
-          remainingCardsInDeck: player.remainingCardsInDeck,
-          currentCardsState: {
-            create: player.currentCardsState?.getNewItems().map((card) => ({
-              cardId: card.cardId.toString(),
-              playerId: card.playerId.toString(),
-              position: card.position,
-              attackModification: card.attackModification,
-              deffenseModification: card.deffenseModification,
-            })),
-          },
-        })),
+        createMany: {
+          data:
+            match.playersInMatch?.getNewItems()?.map((player) => ({
+              playerId: player.playerId.toString(),
+              life: player.life,
+              remainingCardsInDeck: player.remainingCardsInDeck,
+              currentCardsState: {
+                createMany: {
+                  data: player.currentCardsState?.getNewItems().map((card) => ({
+                    cardId: card.cardId.toString(),
+                    playerId: card.playerId.toString(),
+                    position: card.position,
+                    attackModification: card.attackModification,
+                    deffenseModification: card.deffenseModification,
+                  })),
+                },
+              },
+            })) || [],
+        },
       },
       turns: {
-        create: match.turns?.getNewItems().map((turn) => ({
-          turn: turn.turn,
-          playerId: turn.playerId.toString(),
-          createdAt: turn.createdAt,
-          updatedAt: turn.updatedAt,
-          status: turn.status as any,
-          turnHistory: {
-            create: turn.historic?.getNewItems().map((history) => ({
-              playerId: history.playerId.toString(),
-              action: history.action as any,
-              actionDescription: history.actionDescription as any,
-              actionResult: history.actionResult as any,
-              createdAt: history.createdAt,
-              updatedAt: history.updatedAt,
-            })),
-          },
-        })),
+        createMany: {
+          data:
+            match.turns?.getNewItems()?.map((turn) => ({
+              turn: turn.turn,
+              playerId: turn.playerId.toString(),
+              createdAt: turn.createdAt,
+              updatedAt: turn.updatedAt,
+              status: turn.status as any,
+              turnHistory: {
+                createMany: {
+                  data: turn.historic?.getNewItems()?.map((history) => ({
+                    playerId: history.playerId.toString(),
+                    action: history.action as any,
+                    actionDescription: history.actionDescription as any,
+                    actionResult: history.actionResult as any,
+                    createdAt: history.createdAt,
+                    updatedAt: history.updatedAt,
+                  })),
+                },
+              },
+            })) || [],
+        },
       },
       id: match.id.toString(),
     };

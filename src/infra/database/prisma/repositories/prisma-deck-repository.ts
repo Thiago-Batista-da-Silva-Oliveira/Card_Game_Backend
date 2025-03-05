@@ -83,23 +83,24 @@ export class PrismaDecksRepository implements DeckRepository {
   }
 
   async save(deck: Deck): Promise<Deck> {
-    const removedItems = deck.deckHasCards.getRemovedItems();
-
-    if (removedItems?.length > 0) {
-      await this.prisma.deckHasCard.deleteMany({
-        where: {
-          OR: removedItems.map((data) => ({
-            cardId: data.cardId.toValue(),
-            deckId: data.deckId.toValue(),
-          })),
-        },
-      });
-    }
-
     const data = PrismaDeckMapper.toPrisma(deck);
     await this.prisma.deck.update({
       where: { id: deck.id.toString() },
-      data,
+      data: {
+        ...data,
+        deckHasCards: {
+          deleteMany: deck.deckHasCards.getRemovedItems().map((data) => ({
+            cardId: data.cardId.toValue(),
+            deckId: data.deckId.toValue(),
+          })),
+          createMany: {
+            data: deck.deckHasCards.getNewItems().map((data) => ({
+              cardId: data.cardId.toValue(),
+              deckId: data.deckId.toValue(),
+            })),
+          },
+        },
+      },
     });
 
     return deck;
